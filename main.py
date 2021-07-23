@@ -205,7 +205,9 @@ class ProxyScraperChecker(object):
             self.working_proxies[protocol] = dict(
                 sorted(
                     self.working_proxies[protocol].items(),
-                    key=lambda x: int(x[0].split(".")[0]),
+                    key=lambda x: tuple(
+                        map(int, x[0].split(":")[0].split("."))
+                    ),
                 )
             )
             for proxy, ip in self.working_proxies[protocol].items():
@@ -250,12 +252,14 @@ def main() -> None:
         colorize=True,
     )
     client = ProxyScraperChecker(
-        "GeoLite2-City.mmdb" if config.GEOLOCATION else None,
-        config.HTTP_SOURCES if config.HTTP else None,
-        config.IP_SERVICE,
-        config.SOCKS4_SOURCES if config.SOCKS4 else None,
-        config.SOCKS5_SOURCES if config.SOCKS5 else None,
-        config.TIMEOUT,
+        geolite2_city_mmdb="GeoLite2-City.mmdb"
+        if config.GEOLOCATION
+        else None,
+        http_sources=config.HTTP_SOURCES if config.HTTP else None,
+        ip_service=config.IP_SERVICE,
+        socks4_sources=config.SOCKS4_SOURCES if config.SOCKS4 else None,
+        socks5_sources=config.SOCKS5_SOURCES if config.SOCKS5 else None,
+        timeout=config.TIMEOUT,
     )
     client.main()
 
