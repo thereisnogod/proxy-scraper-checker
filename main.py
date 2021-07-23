@@ -12,17 +12,7 @@ from maxminddb import open_database
 from maxminddb.reader import Reader
 from requests import get
 
-from config import (
-    GEOLOCATION,
-    HTTP,
-    HTTP_SOURCES,
-    IP_SERVICE,
-    SOCKS4,
-    SOCKS4_SOURCES,
-    SOCKS5,
-    SOCKS5_SOURCES,
-    TIMEOUT,
-)
+import config
 
 
 class ProxyScraperChecker(object):
@@ -261,12 +251,12 @@ def main() -> None:
         colorize=True,
     )
     client = ProxyScraperChecker(
-        "GeoLite2-City.mmdb" if GEOLOCATION else None,
-        HTTP_SOURCES if HTTP else None,
-        IP_SERVICE,
-        SOCKS4_SOURCES if SOCKS4 else None,
-        SOCKS5_SOURCES if SOCKS5 else None,
-        TIMEOUT,
+        "GeoLite2-City.mmdb" if config.GEOLOCATION else None,
+        config.HTTP_SOURCES if config.HTTP else None,
+        config.IP_SERVICE,
+        config.SOCKS4_SOURCES if config.SOCKS4 else None,
+        config.SOCKS5_SOURCES if config.SOCKS5 else None,
+        config.TIMEOUT,
     )
     client.main()
 
