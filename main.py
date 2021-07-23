@@ -126,15 +126,15 @@ class ProxyScraperChecker(object):
             r = get(source.strip(), timeout=15)
         except Exception as e:
             logger.error(f"{source}: {e}")
+            return
+        status_code = r.status_code
+        if status_code == 200:
+            for proxy in r.text.splitlines():
+                proxy = proxy.strip()
+                if self.is_ipv4(proxy.split(":")[0]):
+                    self.all_proxies[protocol].append(proxy)
         else:
-            status_code = r.status_code
-            if status_code == 200:
-                for proxy in r.text.splitlines():
-                    proxy = proxy.strip()
-                    if self.is_ipv4(proxy.split(":")[0]):
-                        self.all_proxies[protocol].append(proxy)
-            else:
-                logger.error(f"{source} status code: {status_code}")
+            logger.error(f"{source} status code: {status_code}")
 
     def check_proxy(self, proxy: str, protocol: str) -> None:
         """Check proxy validity and append it to working_proxies.
@@ -154,10 +154,9 @@ class ProxyScraperChecker(object):
                 timeout=self.TIMEOUT,
             ).text.strip()
         except Exception:
-            pass
-        else:
-            if self.MY_IP != ip and self.is_ipv4(ip):
-                self.working_proxies[protocol][proxy] = ip
+            return
+        if self.MY_IP != ip and self.is_ipv4(ip):
+            self.working_proxies[protocol][proxy] = ip
 
     def get_all_sources(self) -> None:
         """Get proxies from sources and append them to all_proxies."""
