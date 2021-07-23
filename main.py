@@ -213,6 +213,12 @@ class ProxyScraperChecker(object):
                     except FileExistsError:
                         pass
         for protocol in self.protocols:
+            self.working_proxies[protocol] = dict(
+                sorted(
+                    self.working_proxies[protocol].items(),
+                    key=lambda x: int(x[0].split(".")[0]),
+                )
+            )
             for proxy, ip in self.working_proxies[protocol].items():
                 self.append_to_file(f"proxies/{protocol}.txt", proxy)
                 if ip != proxy.split(":")[0]:
@@ -244,7 +250,7 @@ class ProxyScraperChecker(object):
                 len(self.working_proxies[protocol]),
                 protocol,
             )
-        logger.success("Thank you for using this script :)")
+        logger.success("Thank you for using proxy-scraper-checker :)")
 
 
 def main() -> None:
