@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from ipaddress import IPv4Address
-from os import mkdir, remove
+from os import mkdir
+from shutil import rmtree
 from sys import stderr
 from threading import Thread
 from time import sleep
-from typing import Dict, List, Tuple, Union
+from typing import Dict, Iterable, Optional, Tuple, Union
 
 from loguru import logger
 from maxminddb import open_database
@@ -18,14 +19,14 @@ import config
 class ProxyScraperChecker(object):
     def __init__(
         self,
-        geolite2_city_mmdb: str = None,
-        http_sources: Union[Tuple[str, ...], str, None] = None,
-        ip_service: str = "https://ident.me",
-        socks4_sources: Union[Tuple[str, ...], str, None] = None,
-        socks5_sources: Union[Tuple[str, ...], str, None] = None,
         timeout: float = 5,
+        geolite2_city_mmdb: str = None,
+        ip_service: str = "https://ident.me",
+        http_sources: Union[Iterable[str], str, None] = None,
+        socks4_sources: Union[Iterable[str], str, None] = None,
+        socks5_sources: Union[Iterable[str], str, None] = None,
     ) -> None:
-        """Scrape and check proxies from sources and save them to a file.
+        """Scrape and check proxies from sources and save them to files.
 
         Args:
             geolite2_city_mmdb (str): Path to the GeoLite2-City.mmdb if you
@@ -35,30 +36,22 @@ class ProxyScraperChecker(object):
             timeout (float): How many seconds to wait for the connection.
         """
         self.IP_SERVICE = ip_service.strip()
-        self.MY_IP = get(self.IP_SERVICE).text.strip()
-        self.sources = {}
-        if http_sources:
-            self.sources["http"] = self.prepare_sources(http_sources)
-        if socks4_sources:
-            self.sources["socks4"] = self.prepare_sources(socks4_sources)
-        if socks5_sources:
-            self.sources["socks5"] = self.prepare_sources(socks5_sources)
-        self.protocols = self.sources.keys()
-        self.all_proxies: Dict[str, List[str]] = {}
-        # Dict[protocol, Dict[entry-node, exit-node]]
-        self.working_proxies: Dict[str, Dict[str, str]] = {}
-        for protocol in self.protocols:
-            self.all_proxies[protocol] = []
-            self.working_proxies[protocol] = {}
         self.TIMEOUT = timeout
         self.MMDB = geolite2_city_mmdb
-
-    @staticmethod
-    def prepare_sources(
-        sources: Union[Tuple[str, ...], str]
-    ) -> Tuple[str, ...]:
-        """Remove duplicate sources or convert str to tuple."""
-        return (sources,) if isinstance(sources, str) else tuple(set(sources))
+        self.sources = {
+            proto: (sources,)
+            if isinstance(sources, str)
+            else tuple(set(sources))
+            for proto, sources in (
+                ("http", http_sources),
+                ("socks4", socks4_sources),
+                ("socks5", socks5_sources),
+            )
+            if sources
+        }
+        self.proxies: Dict[str, Dict[str, Optional[str]]] = {
+            proto: {} for proto in self.sources
+        }
 
     @staticmethod
     def is_ipv4(ip: str) -> bool:
@@ -80,31 +73,31 @@ class ProxyScraperChecker(object):
 
         Args:
             ip (str): Proxy's ip.
-            reader (Reader): mmdb object.
+            reader (Reader): mmdb Reader instance.
 
         Returns:
-            str: ::country::region::city
+            str: ::Country Name::Region::City
         """
         geolocation = reader.get(ip)
         try:
             country = geolocation.get("country")  # type: ignore
         except AttributeError:
             return "::None::None::None"
-        if country is None:
-            country = geolocation.get("continent")  # type: ignore
-            if country is not None:
-                country = country["names"]["en"]  # type: ignore
-        else:
+        if country:
             country = country["names"]["en"]  # type: ignore
+        else:
+            country = geolocation.get("continent")  # type: ignore
+            if country:
+                country = country["names"]["en"]  # type: ignore
         region = geolocation.get("subdivisions")  # type: ignore
-        if region is not None:
+        if region:
             region = region[0]["names"]["en"]  # type: ignore
         city = geolocation.get("city")  # type: ignore
-        if city is not None:
+        if city:
             city = city["names"]["en"]  # type: ignore
         return f"::{country}::{region}::{city}"
 
-    def start_threads(self, threads: List[Thread]) -> None:
+    def start_threads(self, threads: Iterable[Thread]) -> None:
         """Start and join threads."""
         for t in threads:
             try:
@@ -115,12 +108,12 @@ class ProxyScraperChecker(object):
         for t in threads:
             t.join()
 
-    def get_source(self, source: str, protocol: str) -> None:
-        """Get proxies from source and append them to all_proxies.
+    def get_source(self, source: str, proto: str) -> None:
+        """Get proxies from source.
 
         Args:
             source (str): Proxy list URL.
-            protocol (str): http/socks4/socks5.
+            proto (str): http/socks4/socks5.
         """
         try:
             r = get(source.strip(), timeout=15)
@@ -130,118 +123,126 @@ class ProxyScraperChecker(object):
         status_code = r.status_code
         if status_code == 200:
             for proxy in r.text.splitlines():
-                proxy = proxy.strip()
+                proxy = (
+                    proxy.replace(f"{proto}://", "")
+                    .replace("https://", "")
+                    .strip()
+                )
                 if self.is_ipv4(proxy.split(":")[0]):
-                    self.all_proxies[protocol].append(proxy)
+                    self.proxies[proto][proxy] = None
         else:
             logger.error(f"{source} status code: {status_code}")
 
-    def check_proxy(self, proxy: str, protocol: str) -> None:
-        """Check proxy validity and append it to working_proxies.
+    def check_proxy(self, proxy: str, proto: str) -> None:
+        """Check proxy validity.
 
         Args:
             proxy (str): ip:port.
-            protocol (str): http/socks4/socks5.
+            proto (str): http/socks4/socks5.
         """
-        proxy = proxy.replace(f"{protocol}://", "").replace("https://", "")
         try:
-            ip = get(
+            exit_node = get(
                 self.IP_SERVICE,
                 proxies={
-                    "http": f"{protocol}://{proxy}",
-                    "https": f"{protocol}://{proxy}",
+                    "http": f"{proto}://{proxy}",
+                    "https": f"{proto}://{proxy}",
                 },
                 timeout=self.TIMEOUT,
             ).text.strip()
         except Exception:
             return
-        if self.MY_IP != ip and self.is_ipv4(ip):
-            self.working_proxies[protocol][proxy] = ip
+        if self.is_ipv4(exit_node):
+            self.proxies[proto][proxy] = exit_node
 
     def get_all_sources(self) -> None:
-        """Get proxies from sources and append them to all_proxies."""
-        logger.info("Getting all sources")
-        self.start_threads(
-            [
-                Thread(target=self.get_source, args=(source, protocol))
-                for protocol in self.protocols
-                for source in self.sources[protocol]
-            ]
-        )
+        """Get proxies from sources."""
+        logger.info("Getting sources")
+        threads = [
+            Thread(target=self.get_source, args=(source, proto))
+            for proto, sources in self.sources.items()
+            for source in sources
+        ]
+        self.start_threads(threads)
 
     def check_all_proxies(self) -> None:
-        """Check all_proxies and append working ones to working_proxies."""
-        unique_proxies = {}
-        for proto in self.protocols:
-            unique_proxies[proto] = tuple(set(self.all_proxies[proto]))
-            logger.info(
-                "Checking {0} {1} proxies", len(unique_proxies[proto]), proto
-            )
-        self.start_threads(
-            [
-                Thread(target=self.check_proxy, args=(proxy, protocol))
-                for protocol in self.protocols
-                for proxy in unique_proxies[protocol]
-            ]
-        )
+        for proto, proxies in self.proxies.items():
+            logger.info("Checking {0} {1} proxies", len(proxies), proto)
+        threads = [
+            Thread(target=self.check_proxy, args=(proxy, proto))
+            for proto, proxies in self.proxies.items()
+            for proxy in proxies
+        ]
+        self.start_threads(threads)
 
-    def save_working_proxies(self) -> None:
+    @staticmethod
+    def _get_sorting_key(x: Tuple[str, Optional[str]]) -> Tuple[int, ...]:
+        octets = x[0].replace(":", ".").split(".")
+        return tuple(map(int, octets))
+
+    def sort_proxies(self) -> None:
+        """Delete invalid proxies and sort working ones."""
+        prox = [
+            (
+                proto,
+                [
+                    (proxy, exit_node)
+                    for proxy, exit_node in proxies.items()
+                    if exit_node
+                ],
+            )
+            for proto, proxies in self.proxies.items()
+        ]
+        self.proxies = {
+            proto: dict(sorted(proxies, key=self._get_sorting_key))
+            for proto, proxies in prox
+        }
+
+    def save_proxies(self) -> None:
         """Delete old proxies and save new ones."""
-        for directory in (
+        directories = [
             "proxies",
             "proxies_anonymous",
             "proxies_geolocation",
             "proxies_geolocation_anonymous",
-        ):
-            for file in ("http.txt", "socks4.txt", "socks5.txt"):
-                try:
-                    remove(f"{directory}/{file}")
-                except FileNotFoundError:
-                    try:
-                        mkdir(directory)
-                    except FileExistsError:
-                        pass
-        for protocol in self.protocols:
-            self.working_proxies[protocol] = dict(
-                sorted(
-                    self.working_proxies[protocol].items(),
-                    key=lambda x: tuple(
-                        map(int, x[0].split(":")[0].split("."))
-                    ),
-                )
-            )
-            for proxy, ip in self.working_proxies[protocol].items():
-                self.append_to_file(f"proxies/{protocol}.txt", proxy)
-                if ip != proxy.split(":")[0]:
+        ]
+        for directory in directories:
+            try:
+                rmtree(directory)
+            except FileNotFoundError:
+                pass
+        if not self.MMDB:
+            directories = ["proxies", "proxies_anonymous"]
+        for directory in directories:
+            mkdir(directory)
+        self.sort_proxies()
+        for proto, proxies in self.proxies.items():
+            for proxy, exit_node in proxies.items():
+                self.append_to_file(f"proxies/{proto}.txt", proxy)
+                if exit_node != proxy.split(":")[0]:
                     self.append_to_file(
-                        f"proxies_anonymous/{protocol}.txt", proxy
+                        f"proxies_anonymous/{proto}.txt", proxy
                     )
         if self.MMDB:
             with open_database(self.MMDB) as reader:
-                for protocol in self.protocols:
-                    for proxy, ip in self.working_proxies[protocol].items():
-                        line = proxy + self.get_geolocation(ip, reader)
+                for proto, proxies in self.proxies.items():
+                    for proxy, exit_node in proxies.items():
+                        line = proxy + self.get_geolocation(exit_node, reader)  # type: ignore
                         self.append_to_file(
-                            f"proxies_geolocation/{protocol}.txt", line
+                            f"proxies_geolocation/{proto}.txt", line
                         )
-                        if ip != proxy.split(":")[0]:
+                        if exit_node != proxy.split(":")[0]:
                             self.append_to_file(
-                                f"proxies_geolocation_anonymous/{protocol}.txt",
+                                f"proxies_geolocation_anonymous/{proto}.txt",
                                 line,
                             )
 
     def main(self) -> None:
         self.get_all_sources()
         self.check_all_proxies()
-        self.save_working_proxies()
+        self.save_proxies()
         logger.success("Result:")
-        for protocol in self.protocols:
-            logger.info(
-                "{0} {1} proxies",
-                len(self.working_proxies[protocol]),
-                protocol,
-            )
-        logger.success("Thank you for using proxy-scraper-checker :)")
+        for proto, proxies in self.proxies.items():
+            logger.success("{0} - {1}", proto, len(proxies))
 
 
 def main() -> None:
@@ -251,17 +252,18 @@ def main() -> None:
         format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{message}</level>",
         colorize=True,
     )
-    client = ProxyScraperChecker(
+    proxy_scraper_checker = ProxyScraperChecker(
+        timeout=config.TIMEOUT,
         geolite2_city_mmdb="GeoLite2-City.mmdb"
         if config.GEOLOCATION
         else None,
-        http_sources=config.HTTP_SOURCES if config.HTTP else None,
         ip_service=config.IP_SERVICE,
+        http_sources=config.HTTP_SOURCES if config.HTTP else None,
         socks4_sources=config.SOCKS4_SOURCES if config.SOCKS4 else None,
         socks5_sources=config.SOCKS5_SOURCES if config.SOCKS5 else None,
-        timeout=config.TIMEOUT,
     )
-    client.main()
+    proxy_scraper_checker.main()
+    logger.success("Thank you for using proxy-scraper-checker :)")
 
 
 if __name__ == "__main__":

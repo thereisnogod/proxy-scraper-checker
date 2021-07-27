@@ -4,7 +4,11 @@ Get and check free anonymous HTTP, SOCKS4, SOCKS5 proxies with geolocation info 
 
 **You can get proxies obtained using this script in [monosans/proxy-list](https://github.com/monosans/proxy-list) (updated every ~15 minutes).**
 
-## Using this script
+## Note about git clone
+
+To make `git clone` way faster use `--depth 1` flag.
+
+## Usage
 
 - Make sure `Python` version is 3.6 or higher.
 - Install dependencies from `requirements.txt`.

@@ -18,6 +18,8 @@ HTTP_SOURCES = (
     "https://raw.githubusercontent.com/sunny9577/proxy-scraper/master/proxies.txt",
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt",
     "https://raw.githubusercontent.com/Volodichev/proxy-list/main/http.txt",
+    "https://www.proxy-list.download/api/v1/get?type=http",
+    "https://www.proxy-list.download/api/v1/get?type=https",
 )
 
 # SOCKS proxies need PySocks library installed.
@@ -28,15 +30,17 @@ SOCKS4_SOURCES = (
     "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS4_RAW.txt",
     "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt",
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt",
+    "https://www.proxy-list.download/api/v1/get?type=socks4",
 )
 SOCKS5 = True
 SOCKS5_SOURCES = (
-    "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks5"
+    "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks5",
     "https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt",
     "https://raw.githubusercontent.com/mmpx12/proxy-list/master/socks5.txt",
     "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS5_RAW.txt",
     "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt",
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt",
+    "https://www.proxy-list.download/api/v1/get?type=socks5",
 )
 
 # Add geolocation info for each proxy (True or False).
