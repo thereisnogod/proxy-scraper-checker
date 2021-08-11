@@ -47,10 +47,11 @@ SOCKS5_SOURCES = (
 )
 
 # Add geolocation info for each proxy (True or False).
-# Output format is ip:port::Country Name::Region::City
+# Output format is ip:port::Country::Region::City
 GEOLOCATION = True
 
-# Service for getting your IP address and checking if proxies are valid.
+# Service for checking the IP address.
+# For some people "https://checkip.amazonaws.com" is faster than "https://ident.me".
 IP_SERVICE = "https://ident.me"
 
 # How many seconds to wait for the proxy to make a connection.
