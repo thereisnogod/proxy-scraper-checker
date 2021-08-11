@@ -27,7 +27,7 @@ When the script finishes running, the following folders will be created:
 
 - `proxies_geolocation_anonymous` - same as `proxies_anonymous`, but including exit-node's geolocation.
 
-Geolocation format is ip:port::Country::State::City.
+Geolocation format is ip:port::Country::Region::City.
 
 ## Buy me a coffee
 
