@@ -79,22 +79,21 @@ class ProxyScraperChecker(object):
             str: ::Country Name::Region::City
         """
         geolocation = reader.get(ip)
-        try:
-            country = geolocation.get("country")  # type: ignore
-        except AttributeError:
+        if not isinstance(geolocation, dict):
             return "::None::None::None"
+        country = geolocation.get("country")
         if country:
-            country = country["names"]["en"]  # type: ignore
+            country = country["names"]["en"]
         else:
-            country = geolocation.get("continent")  # type: ignore
+            country = geolocation.get("continent")
             if country:
-                country = country["names"]["en"]  # type: ignore
-        region = geolocation.get("subdivisions")  # type: ignore
+                country = country["names"]["en"]
+        region = geolocation.get("subdivisions")
         if region:
-            region = region[0]["names"]["en"]  # type: ignore
-        city = geolocation.get("city")  # type: ignore
+            region = region[0]["names"]["en"]
+        city = geolocation.get("city")
         if city:
-            city = city["names"]["en"]  # type: ignore
+            city = city["names"]["en"]
         return f"::{country}::{region}::{city}"
 
     def start_threads(self, threads: Iterable[Thread]) -> None:
