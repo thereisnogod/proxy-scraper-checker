@@ -16,7 +16,7 @@ from requests import get
 import config
 
 
-class ProxyScraperChecker(object):
+class ProxyScraperChecker:
     def __init__(
         self,
         timeout: float = 5,
@@ -165,7 +165,7 @@ class ProxyScraperChecker(object):
 
     def check_all_proxies(self) -> None:
         for proto, proxies in self.proxies.items():
-            logger.info("Checking {0} {1} proxies", len(proxies), proto)
+            logger.info(f"Checking {len(proxies)} {proto} proxies")
         threads = [
             Thread(target=self.check_proxy, args=(proxy, proto))
             for proto, proxies in self.proxies.items()
@@ -241,7 +241,7 @@ class ProxyScraperChecker(object):
         self.save_proxies()
         logger.success("Result:")
         for proto, proxies in self.proxies.items():
-            logger.success("{0} - {1}", proto, len(proxies))
+            logger.success(f"{proto} - {len(proxies)}")
 
 
 def main() -> None:
