@@ -6,7 +6,7 @@ from shutil import rmtree
 from sys import stderr
 from threading import Thread
 from time import sleep
-from typing import Dict, Iterable, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, Optional, Tuple, Union
 
 from loguru import logger
 from maxminddb import open_database
@@ -38,7 +38,7 @@ class ProxyScraperChecker:
         self.IP_SERVICE = ip_service.strip()
         self.TIMEOUT = timeout
         self.MMDB = geolite2_city_mmdb
-        self.sources = {
+        self.SOURCES = {
             proto: (sources,)
             if isinstance(sources, str)
             else tuple(set(sources))
@@ -50,7 +50,7 @@ class ProxyScraperChecker:
             if sources
         }
         self.proxies: Dict[str, Dict[str, Optional[str]]] = {
-            proto: {} for proto in self.sources
+            proto: {} for proto in self.SOURCES
         }
 
     @staticmethod
@@ -158,7 +158,7 @@ class ProxyScraperChecker:
         logger.info("Getting sources")
         threads = [
             Thread(target=self.get_source, args=(source, proto))
-            for proto, sources in self.sources.items()
+            for proto, sources in self.SOURCES.items()
             for source in sources
         ]
         self.start_threads(threads)
@@ -174,7 +174,7 @@ class ProxyScraperChecker:
         self.start_threads(threads)
 
     @staticmethod
-    def _get_sorting_key(x: Tuple[str, Optional[str]]) -> Tuple[int, ...]:
+    def _get_sorting_key(x: Tuple[str, Any]) -> Tuple[int, ...]:
         octets = x[0].replace(":", ".").split(".")
         return tuple(map(int, octets))
 
