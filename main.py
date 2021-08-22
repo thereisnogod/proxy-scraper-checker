@@ -63,8 +63,8 @@ class ProxyScraperChecker:
         return True
 
     @staticmethod
-    def append_to_file(file_name: str, content: str) -> None:
-        with open(file_name, "a", encoding="utf-8") as f:
+    def append_to_file(file_path: str, content: str) -> None:
+        with open(file_path, "a", encoding="utf-8") as f:
             f.write(f"{content}\n")
 
     @staticmethod
@@ -198,42 +198,48 @@ class ProxyScraperChecker:
 
     def save_proxies(self) -> None:
         """Delete old proxies and save new ones."""
-        directories = [
+        self.sort_proxies()
+        directories_to_delete = (
             "proxies",
             "proxies_anonymous",
             "proxies_geolocation",
             "proxies_geolocation_anonymous",
-        ]
-        for directory in directories:
+        )
+        for directory in directories_to_delete:
             try:
                 rmtree(directory)
             except FileNotFoundError:
                 pass
-        if not self.MMDB:
-            directories = ["proxies", "proxies_anonymous"]
-        for directory in directories:
+        directories_to_create = (
+            directories_to_delete
+            if self.MMDB
+            else ("proxies", "proxies_anonymous")
+        )
+        for directory in directories_to_create:
             mkdir(directory)
-        self.sort_proxies()
+
+        # proxies and proxies_anonymous folders
         for proto, proxies in self.proxies.items():
+            path = f"proxies/{proto}.txt"
+            path_anonymous = f"proxies_anonymous/{proto}.txt"
             for proxy, exit_node in proxies.items():
-                self.append_to_file(f"proxies/{proto}.txt", proxy)
+                self.append_to_file(path, proxy)
                 if exit_node != proxy.split(":")[0]:
-                    self.append_to_file(
-                        f"proxies_anonymous/{proto}.txt", proxy
-                    )
+                    self.append_to_file(path_anonymous, proxy)
+
+        # proxies_geolocation and proxies_geolocation_anonymous folders
         if self.MMDB:
             with open_database(self.MMDB) as reader:
                 for proto, proxies in self.proxies.items():
+                    path = f"proxies_geolocation/{proto}.txt"
+                    path_anonymous = (
+                        f"proxies_geolocation_anonymous/{proto}.txt"
+                    )
                     for proxy, exit_node in proxies.items():
                         line = proxy + self.get_geolocation(exit_node, reader)  # type: ignore
-                        self.append_to_file(
-                            f"proxies_geolocation/{proto}.txt", line
-                        )
+                        self.append_to_file(path, line)
                         if exit_node != proxy.split(":")[0]:
-                            self.append_to_file(
-                                f"proxies_geolocation_anonymous/{proto}.txt",
-                                line,
-                            )
+                            self.append_to_file(path_anonymous, line)
 
     def main(self) -> None:
         self.get_all_sources()
