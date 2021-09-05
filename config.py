@@ -3,7 +3,7 @@
 # PROTOCOL - whether to enable getting certain protocol proxies (True or False).
 # PROTOCOL_SOURCES - proxy lists URLs.
 HTTP = True
-HTTP_SOURCES = (
+HTTP_SOURCES = {
     "https://api.proxyscrape.com/v2/?request=getproxies&protocol=http",
     "https://raw.githubusercontent.com/chipsed/proxies/main/proxies.txt",
     "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt",
@@ -23,11 +23,12 @@ HTTP_SOURCES = (
     "https://raw.githubusercontent.com/Volodichev/proxy-list/main/http.txt",
     "https://www.proxy-list.download/api/v1/get?type=http",
     "https://www.proxy-list.download/api/v1/get?type=https",
-)
+    "https://www.proxyscan.io/download?type=http",
+}
 
 # SOCKS proxies need PySocks library installed.
 SOCKS4 = True
-SOCKS4_SOURCES = (
+SOCKS4_SOURCES = {
     "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks4",
     "https://raw.githubusercontent.com/jetkai/free-proxies-autoupdated/main/proxies-socks4.txt",
     "https://raw.githubusercontent.com/mmpx12/proxy-list/master/socks4.txt",
@@ -35,9 +36,10 @@ SOCKS4_SOURCES = (
     "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt",
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt",
     "https://www.proxy-list.download/api/v1/get?type=socks4",
-)
+    "https://www.proxyscan.io/download?type=socks4",
+}
 SOCKS5 = True
-SOCKS5_SOURCES = (
+SOCKS5_SOURCES = {
     "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks5",
     "https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt",
     "https://raw.githubusercontent.com/jetkai/free-proxies-autoupdated/main/proxies-socks5.txt",
@@ -47,7 +49,8 @@ SOCKS5_SOURCES = (
     "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt",
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt",
     "https://www.proxy-list.download/api/v1/get?type=socks5",
-)
+    "https://www.proxyscan.io/download?type=socks5",
+}
 
 # Add geolocation info for each proxy (True or False).
 # Output format is ip:port::Country::Region::City
