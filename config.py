@@ -40,16 +40,14 @@ SOCKS4_SOURCES = {
 }
 SOCKS5 = True
 SOCKS5_SOURCES = {
-    "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks5",
-    "https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt",
-    "https://raw.githubusercontent.com/jetkai/free-proxies-autoupdated/main/proxies-socks5.txt",
-    "https://raw.githubusercontent.com/mmpx12/proxy-list/master/socks5.txt",
-    "https://raw.githubusercontent.com/roma8ok/proxy-list/main/proxy-list-socks5.txt",
-    "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS5_RAW.txt",
-    "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt",
-    "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt",
+    "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks5&timeout=10000&country=all&simplified=true",
     "https://www.proxy-list.download/api/v1/get?type=socks5",
     "https://www.proxyscan.io/download?type=socks5",
+    "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt",
+    "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt",
+    "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt",
+    "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt",
+    "https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt",
 }
 
 # Add geolocation info for each proxy (True or False).
