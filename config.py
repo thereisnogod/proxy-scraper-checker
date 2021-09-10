@@ -37,6 +37,7 @@ SOCKS4_SOURCES = {
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt",
     "https://www.proxy-list.download/api/v1/get?type=socks4",
     "https://www.proxyscan.io/download?type=socks4",
+    "https://api.proxyscrape.com/?request=displayproxies&proxytype=socks4&country=all",
 }
 SOCKS5 = True
 SOCKS5_SOURCES = {
