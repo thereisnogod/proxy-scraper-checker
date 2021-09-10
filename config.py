@@ -61,4 +61,4 @@ IP_SERVICE = "https://ident.me"
 
 # How many seconds to wait for the proxy to make a connection.
 # Lower value results in getting less proxies but they will be faster.
-TIMEOUT = 5
+TIMEOUT = 15
