@@ -4,7 +4,7 @@
 # PROTOCOL_SOURCES - proxy lists URLs.
 HTTP = True
 HTTP_SOURCES = {
-            "https://raw.githubusercontent.com/BlackSnowDot/proxylist-update-every-minute/main/http.txt",
+        "https://raw.githubusercontent.com/BlackSnowDot/proxylist-update-every-minute/main/http.txt",
         "http://olaf4snow.com/public/proxy.txt",
         "https://raw.githubusercontent.com/ItzRazvyy/ProxyList/main/http.txt",
         "https://raw.githubusercontent.com/ItzRazvyy/ProxyList/main/https.txt",
