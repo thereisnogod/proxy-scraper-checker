@@ -20,7 +20,7 @@ HTTP_SOURCES = {
     "https://raw.githubusercontent.com/sunny9577/proxy-scraper/master/proxies.txt",
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt",
     "https://raw.githubusercontent.com/Volodichev/proxy-list/main/http.txt",
-    "https://www.proxyscan.io/download?type=http",
+    "https://raw.githubusercontent.com/securityscorecard/SSC-Threat-Intel-IoCs/master/KillNet-DDoS-Blocklist/proxylist.txt",
 }
 
 # SOCKS proxies need PySocks library installed.
@@ -31,14 +31,11 @@ SOCKS4_SOURCES = {
     "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS4_RAW.txt",
     "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt",
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt",
-    "https://www.proxy-list.download/api/v1/get?type=socks4",
-    "https://www.proxyscan.io/download?type=socks4",
     "https://api.proxyscrape.com/?request=displayproxies&proxytype=socks4&country=all",
 }
 SOCKS5 = True
 SOCKS5_SOURCES = {
     "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks5&timeout=10000&country=all&simplified=true",
-    "https://www.proxy-list.download/api/v1/get?type=socks5",
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt",
     "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt",
     "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt",
