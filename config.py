@@ -72,12 +72,32 @@ SOCKS4_SOURCES = {
 }
 SOCKS5 = True
 SOCKS5_SOURCES = {
-    "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks5&timeout=10000&country=all&simplified=true",
-    "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt",
-    "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt",
-    "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt",
-    "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt",
-    "https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt",
+        "https://raw.githubusercontent.com/BlackSnowDot/proxylist-update-every-minute/main/socks.txt",
+        "https://sunny9577.github.io/proxy-scraper/proxies.txt",
+        "https://www.openproxylist.net/socks5.txt",
+        "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks5&timeout=10000&country=all&simplified=true",
+        "https://www.proxy-list.download/api/v1/get?type=socks5",
+        "https://www.proxyscan.io/download?type=socks5",
+        "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt",
+        "https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt",
+        "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt",
+        "https://raw.githubusercontent.com/jetkai/proxy-list/main/archive/txt/proxies-socks5.txt",
+        "https://api.openproxylist.xyz/socks5.txt",
+        "https://www.freeproxychecker.com/result/socks5_proxies.txt",
+        "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS5_RAW.txt",
+        'https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt',
+        'https://raw.githubusercontent.com/mmpx12/proxy-list/master/socks5.txt',
+        'https://raw.githubusercontent.com/rdavydov/proxy-list/main/proxies/socks5.txt',
+        'https://raw.githubusercontent.com/RX4096/proxy-list/main/online/socks5.txt',
+        'https://raw.githubusercontent.com/manuGMG/proxy-365/main/SOCKS5.txt',
+        'https://raw.githubusercontent.com/UptimerBot/proxy-list/main/proxies/socks5.txt',
+        'https://raw.githubusercontent.com/saschazesiger/Free-Proxies/master/proxies/socks5.txt',
+        'https://raw.githubusercontent.com/HyperBeats/proxy-list/main/socks5.txt',
+        'https://openproxy.space/list/socks5',
+        'https://proxylist.live/nodes/socks5_1.php?page=1&showall=1',
+        'https://spys.me/socks.txt',
+        "https://sheesh.rip/socks5",
+        "https://raw.githubusercontent.com/officialputuid/KangProxy/KangProxy/socks5/socks5.txt",
 }
 
 # Add geolocation info for each proxy (True or False).
