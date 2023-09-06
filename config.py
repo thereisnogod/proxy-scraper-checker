@@ -47,12 +47,28 @@ HTTP_SOURCES = {
 # SOCKS proxies need PySocks library installed.
 SOCKS4 = True
 SOCKS4_SOURCES = {
-    "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks4",
-    "https://raw.githubusercontent.com/mmpx12/proxy-list/master/socks4.txt",
-    "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS4_RAW.txt",
-    "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt",
-    "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt",
-    "https://api.proxyscrape.com/?request=displayproxies&proxytype=socks4&country=all",
+        "https://raw.githubusercontent.com/BlackSnowDot/proxylist-update-every-minute/main/socks.txt",
+        "https://api.proxyscrape.com/?request=displayproxies&proxytype=socks4&country=all",
+        "https://www.proxy-list.download/api/v1/get?type=socks4",
+        "https://www.proxyscan.io/download?type=socks4",
+        "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt",   
+        "https://raw.githubusercontent.com/jetkai/proxy-list/main/archive/txt/proxies-socks4.txt",
+        "https://api.openproxylist.xyz/socks4.txt",
+        "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt",
+        "https://www.freeproxychecker.com/result/socks4_proxies.txt",
+        "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS4_RAW.txt",
+        'https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks4.txt',
+        'https://raw.githubusercontent.com/mmpx12/proxy-list/master/socks4.txt',
+        'https://raw.githubusercontent.com/rdavydov/proxy-list/main/proxies/socks4.txt',
+        'https://raw.githubusercontent.com/RX4096/proxy-list/main/online/socks4.txt',
+        'https://raw.githubusercontent.com/UptimerBot/proxy-list/main/proxies/socks4.txt',
+        'https://raw.githubusercontent.com/saschazesiger/Free-Proxies/master/proxies/socks4.txt',
+        'https://proxylist.live/nodes/socks4_1.php?page=1&showall=1',
+        'https://raw.githubusercontent.com/HyperBeats/proxy-list/main/socks4.txt',
+        'https://openproxy.space/list/socks4',
+        "https://www.openproxylist.net/socks4.txt",
+        "https://sheesh.rip/socks4",
+        "https://raw.githubusercontent.com/officialputuid/KangProxy/KangProxy/socks4/socks4.txt",
 }
 SOCKS5 = True
 SOCKS5_SOURCES = {
